@@ -6,5 +6,6 @@
 /nginx
 /mysql
 /wp_thilak
+/wp_sanne
 !.env_example
 !nginx/default*
