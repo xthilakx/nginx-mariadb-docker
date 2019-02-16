@@ -1,11 +1,11 @@
 version: '3.6'
 services:
 
-  wordpress:
+  wp_thilak:
     image: wordpress:${WORDPRESS_VERSION:-php7.3-fpm}
-    container_name: wordpress
+    container_name: wp_thilak
     volumes:
-      - ./wordpress:/var/www/html
+      - ./wp_thilak:/var/www/html/wp_thilak
     environment:
       - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME:-wordpress}
       - WORDPRESS_TABLE_PREFIX=${WORDPRESS_TABLE_PREFIX:-wp_}
@@ -41,5 +41,5 @@ services:
       - ${SSL_CERTS_DIR:-./certs}:/etc/letsencrypt
       - ${SSL_CERTS_DATA_DIR:-./certs-data}:/data/letsencrypt
     depends_on:
-      - wordpress
+      - wp_thilak
     restart: always

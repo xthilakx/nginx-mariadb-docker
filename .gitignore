@@ -1,10 +1,10 @@
 .env*
 .idea/
-certs/
-certs-data/
-logs/
-nginx/
-mysql/
-wordpress/
+/certs
+/certs-data
+/logs
+/nginx
+/mysql
+/wp_thilak
 !.env_example
 !nginx/default*
