@@ -1,4 +1,4 @@
-version: '3.6'
+version: '3.7'
 services:
 
   mysql:
@@ -25,10 +25,11 @@ services:
     volumes:
       - ${NGINX_CONF_DIR}:/etc/nginx/conf.d
       - ${NGINX_LOG_DIR}:/var/log/nginx
-      - wp_thilak_data:/var/www/html/wp_thilak
-      - wp_sanne_data:/var/www/html/wp_sanne
       - ${SSL_CERTS_DIR}:/etc/letsencrypt
       - ${SSL_CERTS_DATA_DIR}:/data/letsencrypt
+      - ./server-configs-nginx/h5bp:/etc/nginx/h5bp
+      - wp_thilak_data:/var/www/html/wp_thilak
+      - wp_sanne_data:/var/www/html/wp_sanne
     networks:
       - wp_thilak_net
       - wp_sanne_net

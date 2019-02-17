@@ -35,6 +35,10 @@ Further details available [here](CONSOLE.md/#tldr).
 
 ## <a name="setup"></a>Setup and configuration
 
+### <a name="submodule"></a>Git submodules
+
+This project uses git submodules. Do not forget to clone recursively :) 
+
 ### <a name="dotenv"></a>.env
 
 A `.example.env` file has been included to more easily set docker-compose variables without having to modify the docker-compose.yml file itself.
