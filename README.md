@@ -14,7 +14,7 @@ This project is a docker compose installation of a single site WordPress instanc
 
 - [TL;DR](#tldr) - I don't want details and just want to run WordPress locally using http
 - [Setup and configuration](#setup) - environment and configuration setup options
-  - [.env_example](#dotenv) - environment variable declaration for docker-compose to use
+  - [.example.env](#dotenv) - environment variable declaration for docker-compose to use
   - [HTTP or HTTPS?](#http-or-https) - http or https (via Let's Encrypt) to serve your content
   - [SSL certificates](#ssl-certs) - secure socket layer encryption options
   - [Let's Encrypt initialization](#lets-encrypt) - use Let's Encrypt for SSL certificates (Important [NOTE](#dns_reg) regarding DNS registration assumptions)
@@ -43,11 +43,11 @@ Further details available [here](CONSOLE.md/#tldr).
 
 ### <a name="dotenv"></a>.env
 
-A `.env_example` file has been included to more easily set docker-compose variables without having to modify the docker-compose.yml file itself.
+A `.example.env` file has been included to more easily set docker-compose variables without having to modify the docker-compose.yml file itself.
 
 Default values have been provided as a means of getting up and running quickly for testing purposes. It is up to the user to modify these to best suit their deployment preferences.
 
-Create a file named `.env` from the `.env_example` file and adjust to suit your deployment
+Create a file named `.env` from the `.example.env` file and adjust to suit your deployment
 
 ```
 cp .env_exmaple .env

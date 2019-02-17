@@ -7,5 +7,6 @@
 /mysql
 /wp_thilak
 /wp_sanne
-!.env_example
+/letsencrypt/lets_encrypt.conf
+!example.env
 !nginx/default*
