@@ -3,6 +3,8 @@ server {
     listen [::]:80;
     server_name FQDN_OR_IP;
 
+    include h5bp/basic.conf;
+
     location / {
         rewrite ^ https://$host$request_uri? permanent;
     }
@@ -40,6 +42,8 @@ server {
     ssl_certificate           /etc/letsencrypt/live/FQDN_OR_IP/fullchain.pem;
     ssl_certificate_key       /etc/letsencrypt/live/FQDN_OR_IP/privkey.pem;
     ssl_trusted_certificate   /etc/letsencrypt/live/FQDN_OR_IP/chain.pem;
+
+    include h5bp/basic.conf;
 
     location / {
         try_files $uri $uri/ /index.php?$args;
