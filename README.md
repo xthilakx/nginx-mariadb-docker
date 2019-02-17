@@ -1,14 +1,8 @@
-# WordPress: with Nginx web server in Docker
+# Containerized Nginx Reverse Proxy and MariaDB
 
-This project is a docker compose installation of a single site WordPress instance using Nginx as the web server and MariaDB as the database.
+This project is a docker compose installation of Nginx as reverse proxy and MariaDB as the database which powers multiple backend applications and runs on my DigitalOcean droplet.
 
 - Let's Encrypt SSL enabled option using [https://hub.docker.com/r/certbot/certbot/](https://hub.docker.com/r/certbot/certbot/)
-- Work inspired by: [Dockerizing WordPress with Nginx and PHP-FPM on Ubuntu 16.04](https://www.howtoforge.com/tutorial/dockerizing-wordpress-with-nginx-and-php-fpm/)
-
-**What is WordPress?** 
-
-- WordPress is open source software you can use to create a beautiful website, blog, or app.
-- More information at [https://wordpress.org](https://wordpress.org)
 
 ## Table of Contents
 
@@ -31,7 +25,7 @@ This project is a docker compose installation of a single site WordPress instanc
 **NOTE**: assumes you are starting from the top level of the cloned repository (`PWD == ./wordpress-nginx-docker`)
 
 ```
-mkdir -p certs/ certs-data/ logs/nginx/ mysql/ wordpress/
+mkdir -p certs/ certs-data/ logs/nginx/ mysql/
 docker-compose up -d
 ```
 
@@ -56,14 +50,6 @@ cp .env_exmaple .env
 Example `.env` file (default values):
 
 ```env
-# wordpress - wordpress:php7.3-fpm
-WORDPRESS_VERSION=php7.3-fpm
-WORDPRESS_DB_NAME=wordpress
-WORDPRESS_TABLE_PREFIX=wp_
-WORDPRESS_DB_HOST=mysql
-WORDPRESS_DB_USER=root
-WORDPRESS_DB_PASSWORD=password
-
 # mariadb - mariadb:latest
 MARIADB_VERSION=latest
 MYSQL_ROOT_PASSWORD=password
@@ -87,7 +73,6 @@ SSL_CERTS_DATA_DIR=./certs-data
 Directories are created on the host and volume mounted to the docker containers. This allows the user to persist data beyond the scope of the container itself. If volumes are not persisted to the host the user runs the risk of losing their data when the container is updated or removed.
 
 - **mysql**: The database files for MariaDB
-- **wordpress**: The WordPress media files
 - **logs/nginx**: The Nginx log files (error.log, access.log)
 - **certs**: SSL certificate files (LetsEncrypt)
 - **certs-data**: SSL challenge/response area (LetsEncrypt)
@@ -435,38 +420,8 @@ docker-compose up -d database
 wait until the database completes it's setup. This can be observed by looking at the log output using `docker-compose logs database` and waiting for the **mysqld: ready for connections** message.
 
 ```
-docker-compose up -d wordpress nginx
+docker-compose up -d nginx
 ```
-
-
-
-## <a name="site"></a>Running site
-
-### Initial WordPress setup
-
-Navigate your browser to [http://127.0.0.1](http://127.0.0.1) and follow the installation prompts
-
-1. Set language
-
-    <img width="80%" alt="Select language" src="https://user-images.githubusercontent.com/5332509/44045885-f47a89fe-9ef7-11e8-8dae-0df0bfb269de.png">
-2. Create an administrative user
-
-    <img width="80%" alt="Create admin user" src="https://user-images.githubusercontent.com/5332509/44045887-f4897cfc-9ef7-11e8-89c6-cfc96cfc9ca0.png">
-
-3. Success
-
-    <img width="80%" alt="Success" src="https://user-images.githubusercontent.com/5332509/44045888-f49b344c-9ef7-11e8-9d65-39517f521d85.png">
-    
-4. Log in as the administrative user, dashboard, view site
-
-    <img width="80%" alt="First login" src="https://user-images.githubusercontent.com/5332509/44045889-f4a71992-9ef7-11e8-8f5d-8ab16da481c2.png">
-    
-    <img width="80%" alt="Site dashboard" src="https://user-images.githubusercontent.com/5332509/44045890-f4b4b264-9ef7-11e8-935b-cbc546cd9e00.png">
-    
-    <img width="80%" alt="View site" src="https://user-images.githubusercontent.com/5332509/44045891-f4c5f90c-9ef7-11e8-88e4-fc8cfb61ea7d.png">
-    
-    
-Once your site is running you can begin to create and publish any content you'd like in your WordPress instance.
 
 ## <a name="stop-and-remove"></a>Stop and remove contaiers
 
@@ -475,45 +430,25 @@ Because `docker-compose.yml` was used to define the container relationships it c
 Stop and remove containers:
 
 ```console
-$ cd wordpress-nginx-docker
+$ cd nginx-mariadb-docker
 $ docker-compose stop
 Stopping nginx     ... done
-Stopping wordpress ... done
 Stopping mysql     ... done
 $ docker-compose rm -f
 Going to remove nginx, wordpress, mysql
 Removing nginx     ... done
-Removing wordpress ... done
 Removing mysql     ... done
 ```
 
 Removing all related directories:
 
 ```console
-$ rm -rf certs/ certs-data/ logs/ mysql/ wordpress/
+$ rm -rf certs/ certs-data/ logs/ mysql/
 ```
 
 A script named `stop-and-remove.sh` has been provided to run these commands for you. See an example [here](CONSOLE.md/#stop-and-remove). 
 
-## <a name="opt-config"></a>Optional Configuration
-
 ### Environment Variables
-
-WordPress environment variables. See the [official image](https://hub.docker.com/_/wordpress/) for additional information.
-
-- `WORDPRESS_DB_NAME`: Name of database used for WordPress in MariaDB
-- `WORDPRESS_TABLE_PREFIX`: Prefix appended to all WordPress related tables in the `WORDPRESS_DB_NAME` database
-- `WORDPRESS_DB_HOST `: Hostname of the database server / container
-- `WORDPRESS_DB_PASSWORD `: Database password for the `WORDPRESS_DB_USER`. By default 'root' is the `WORDPRESS_DB_USER`.
-
-```yaml
-    environment:
-      - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME:-wordpress}
-      - WORDPRESS_TABLE_PREFIX=${WORDPRESS_TABLE_PREFIX:-wp_}
-      - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST:-mysql}
-      - WORDPRESS_DB_USER=${WORDPRESS_DB_USER:-root}
-      - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD:-password}
-```
 
 MySQL environment variables.
 
@@ -534,13 +469,6 @@ If you don't want 'root' as the `WORDPRESS_DB_USER`, then the configuration vari
 Example:
 
 ```yaml
-# wordpress - wordpress:php7.3-fpm
-WORDPRESS_DB_NAME=wordpress
-WORDPRESS_TABLE_PREFIX=wp_
-WORDPRESS_DB_HOST=mysql
-WORDPRESS_DB_USER=wp_user          # new DB user
-WORDPRESS_DB_PASSWORD=wp_password. # new DB password
-
 # mariadb - mariadb:latest
 MYSQL_ROOT_PASSWORD=password
 MYSQL_USER=wp_user                 # same as WORDPRESS_DB_USER
@@ -552,7 +480,6 @@ NGINX_DEFAULT_CONF=./nginx/default.conf
 
 # volumes on host
 NGINX_LOG_DIR=./logs/nginx
-WORDPRESS_DATA_DIR=./wordpress
 SSL_CERTS_DIR=./certs
 SSL_CERTS_DATA_DIR=./certs-data
 ```
@@ -577,12 +504,3 @@ For the `wordpress` stanza, add
     ports:
       - '9000:9000'
 ```
-
-
-## <a name="debug"></a>Debugging tips
-
-TODO:
-
-container logs
-
-permissions
