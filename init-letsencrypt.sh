@@ -1,8 +1,5 @@
 #!/bin/sh
 export $(egrep -v '^#' .env | xargs)
-mkdir -p $NGINX_LOG_DIR
-mkdir -p $SSL_CERTS_DIR
-mkdir -p $SSL_CERTS_DATA_DIR
 domains=(thilak.nl www.thilak.nl sannev.com www.sannev.com)
 rsa_key_size=4096
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
@@ -17,6 +14,7 @@ fi
 echo "### Creating dummy certificate for $domains ..."
 path="/etc/letsencrypt/live/$domains"
 docker-compose run --rm --entrypoint "\
+  
   openssl req -x509 -nodes -newkey rsa:1024 -days 1\
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
