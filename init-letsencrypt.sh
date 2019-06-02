@@ -1,10 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 export $(egrep -v '^#' .env | xargs)
 domains=(thilak.nl www.thilak.nl sannev.com www.sannev.com)
 rsa_key_size=4096
+data_path="./data/certbot"
+email=$SSL_CERT_EMAIL # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
-if [ -d "$SSL_CERTS_DATA_DIR" ]; then
+if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
   if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
     exit
@@ -13,9 +15,8 @@ fi
 
 echo "### Creating dummy certificate for $domains ..."
 path="/etc/letsencrypt/live/$domains"
-mkdir -p "$SSL_CERTS_DATA_DIR/conf/live/$domains"
+mkdir -p "$data_path/conf/live/$domains"
 docker-compose run --rm --entrypoint "\
-  
   openssl req -x509 -nodes -newkey rsa:1024 -days 1\
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
@@ -42,10 +43,10 @@ for domain in "${domains[@]}"; do
   domain_args="$domain_args -d $domain"
 done
 
-# Select appropriate SSL_CERT_EMAIL arg
-case "$SSL_CERT_EMAIL" in
-  "") SSL_CERT_EMAIL_arg="--register-unsafely-without-SSL_CERT_EMAIL" ;;
-  *) SSL_CERT_EMAIL_arg="--email $SSL_CERT_EMAIL" ;;
+# Select appropriate email arg
+case "$email" in
+  "") email_arg="--register-unsafely-without-email" ;;
+  *) email_arg="--email $email" ;;
 esac
 
 # Enable staging mode if needed
@@ -54,7 +55,7 @@ if [ $staging != "0" ]; then staging_arg="--staging"; fi
 docker-compose run --rm --entrypoint "\
   certbot certonly --webroot -w /var/www/certbot \
     $staging_arg \
-    $SSL_CERT_EMAIL_arg \
+    $email_arg \
     $domain_args \
     --rsa-key-size $rsa_key_size \
     --agree-tos \
