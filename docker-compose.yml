@@ -42,6 +42,9 @@ services:
     volumes:
       - ${SSL_CERTS_DIR}:/etc/letsencrypt
       - ${SSL_CERTS_DATA_DIR}:/var/www/certbot
+    networks:
+      - wp_thilak_net
+      - wp_sanne_net
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 networks:
